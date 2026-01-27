@@ -1,0 +1,11 @@
+crime_type,latitude,longitude,hour,day_of_week,area_type,previous_crimes,risk_level
+Theft,19.0760,72.8777,22,6,Residential,689580,High
+Burglary,28.6139,77.2090,1,5,Residential,107573,High
+Cyber Crime,12.9716,77.5946,14,3,Commercial,86420,Medium
+Kidnapping,26.9124,75.7873,18,4,Residential,113564,High
+Accident,22.5726,88.3639,9,2,Highway,165971,Medium
+Fraud,18.5204,73.8567,11,1,Commercial,181553,Medium
+Robbery,17.3850,78.4867,20,6,Roadway,15193,High
+Crime Against Women,28.7041,77.1025,19,5,Residential,448211,High
+Crime Against Children,23.0225,72.5714,16,3,Residential,177335,High
+Cyber Fraud,13.0827,80.2707,13,2,Commercial,59526,Medium
