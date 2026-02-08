@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCity</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- libraries (no style change) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"></script>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="header">
+    <div class="logo">
+        <h1>SafeCity</h1>
+    </div>
+
+    <nav class="navbar">
+        <a href="#home">Dashboard</a>
+        <a href="#features">Graphs</a>
+        <a href="#footer">Contact</a>
+    </nav>
+
+    <div class="fas fa-bars" id="menu-btn"></div>
+</header>
+
+
+<!-- ================= HOME / DASHBOARD ================= -->
+<section class="home" id="home">
+
+<div class="content" style="width:100%; text-align:left">
+
+    <h1 style="font-size:40px">Crime Overview</h1>
+
+    <p><b>Latest Year Total Stolen:</b> <span id="totalStolen"></span></p>
+    <p><b>Total Recovered:</b> <span id="totalRecovered"></span></p>
+    <p><b>Worst State:</b> <span id="worstArea"></span></p>
+    <p><b>Best Recovery %:</b> <span id="recoveryRate"></span>%</p>
+
+</div>
+
+</section>
+
+
+<!-- ================= GRAPHS SECTION ================= -->
+<section class="features" id="features">
+
+<div class="heading">
+    <h1>State-wise Crime Comparison</h1>
+</div>
+
+<canvas id="crimeChart" height="120"></canvas>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+<section class="footer" id="footer">
+    <div class="box-container">
+        <div class="box">
+            <h3>quick links</h3>
+            <a href="#home"><i class="fas fa-chevron-right"></i>Dashboard</a>
+            <a href="#features"><i class="fas fa-chevron-right"></i>Graphs</a>
+            <a href="#footer"><i class="fas fa-chevron-right"></i>Contact</a>
+        </div>
+
+        <div class="box">
+            <h3>contact info</h3>
+            <a href="#"><i class="fas fa-phone"></i>+123-456-789</a>
+            <a href="#"><i class="fas fa-envelope"></i>safecity@email.com</a>
+            <a href="#"><i class="fas fa-map-marker-alt"></i>Mumbai, India</a>
+        </div>
+    </div>
+</section>
+
+
+<script src="js/main.js"></script>
+
+
+<!-- ================= JS LOGIC ================= -->
+<script>
+
+/* ---------------- HEATMAP (Leaflet) ---------------- */
+
+let map = L.map('map').setView([19.0760, 72.8777], 12);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'SafeCity Map'
+}).addTo(map);
+
+
+async function loadHeatmap(){
+    let res = await fetch("/api/heatmap");
+    let data = await res.json();
+
+    data.forEach(p=>{
+        L.circle([p.lat, p.lng], {
+            radius: 150,
+            color: "red"
+        }).addTo(map);
+    });
+}
+
+
+/* ---------------- SUMMARY ---------------- */
+
+async function loadSummary(){
+    let res = await fetch("/api/summary");
+    let d = await res.json();
+
+    document.getElementById("totalCrimes").innerText = d.total;
+    document.getElementById("hotspot").innerText = d.hotspot;
+    document.getElementById("riskScore").innerText = d.risk;
+    document.getElementById("crimeType").innerText = d.type;
+}
+
+
+/* ---------------- TREND GRAPH ---------------- */
+
+async function loadGraph(){
+    let res = await fetch("/api/trends");
+    let d = await res.json();
+
+    new Chart(document.getElementById("crimeChart"), {
+        type: "line",
+        data: {
+            labels: d.labels,
+            datasets: [{
+                label: "Crimes",
+                data: d.values
+            }]
+        }
+    });
+}
+
+
+/* ---------------- INIT ---------------- */
+
+loadSummary();
+loadHeatmap();
+loadGraph();
+
+</script>
+
+</body>
+</html>
